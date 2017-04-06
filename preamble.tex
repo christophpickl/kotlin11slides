@@ -1,0 +1,152 @@
+
+% PACKAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xifthen}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{setspace}
+\usepackage{ulem} % strike through
+\usepackage{textpos}  % textblock
+
+
+% THEME
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\definecolor{kotlinBgDark}{RGB}{20,52,74}
+\definecolor{kotlinBgBright}{RGB}{51,109,146}
+\definecolor{slidesBgDark}{RGB}{32,39,41}
+
+
+% https://www.hartwork.org/beamer-theme-matrix/
+\mode<presentation>
+{
+  \usetheme{Rochester}
+  \usecolortheme{seagull}
+  \setbeamercolor*{frametitle}{fg=white,bg=kotlinBgBright}
+}
+% get rid of navigation symbols at the bottom
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamertemplate{footline}{
+    \hfill\scriptsize{\textcolor{kotlinBgBright}{\insertframenumber}}\hspace*{4pt}\vspace{4pt}
+}%[frame number]
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=kotlinBgBright,
+    filecolor=kotlinBgBright,      
+    urlcolor=kotlinBgBright,
+}
+
+\setbeamertemplate{caption}{\raggedright\footnotesize{\insertcaption}\par}
+
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(\textwidth,-1cm)
+\includegraphics[height=0.6cm]{kotlin_logo_transparent}
+\end{textblock*}}
+
+
+% CUSTOM COMMANDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+    \newenvironment{withoutheadline}{
+        \setbeamertemplate{headline}[default]
+        \def\beamer@entrycode{\vspace*{-\headheight}}
+    }{}
+\makeatother
+
+\newcommand{\quotes}[1]{
+  \linespread{1.3}\selectfont
+  ``\large{\textit{#1}}''\par\bigskip
+  \linespread{1}\selectfont % reset
+}
+
+\newcommand{\fullimage}[1]{
+\begin{withoutheadline}
+\frame{
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{#1}
+\end{figure}
+}
+\end{withoutheadline}
+}
+
+\newcommand{\fullimageCapt}[3]{
+\begin{withoutheadline}
+\frame{
+\begin{figure}[h]
+  \centering
+  \ifthenelse{\equal{#3}{}}{\includegraphics[width=10cm]{#1}}{\includegraphics[width=#3]{#1}}
+%\includegraphics[width=10cm]{#1}
+  \caption{#2}
+\end{figure}
+}
+\end{withoutheadline}
+}
+
+\newcommand\sektion[1]{
+  \section{#1}
+% http://tex.stackexchange.com/questions/44983/beamer-removing-headline-and-its-space-on-a-single-frame-for-plan-but-keepin
+{
+\setbeamertemplate{footline}{}
+\setbeamercolor{frametitle}{bg=slidesBgDark} {
+\setbeamercolor{background canvas}{bg=slidesBgDark} {
+  \frame{
+    \textbf{\huge\textcolor{white}{#1}}
+    \noindent\makebox[\linewidth]{\textcolor{kotlinBgBright}{\rule{\paperwidth}{1.4pt}}} % http://tex.stackexchange.com/questions/88502/how-to-change-the-shaded-color-of-the-rule-command
+  }}
+}
+}
+}
+
+% LISTING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{IJ_text}{RGB}{169,183,198}
+\definecolor{IJ_background}{RGB}{43,43,43}
+\definecolor{IJ_keyword}{RGB}{204,120,50}
+\definecolor{IJ_string}{RGB}{106,135,89}
+\definecolor{IJ_comment}{RGB}{128,128,128}
+\definecolor{IJ_identifier}{RGB}{255,198,109}
+
+% https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+% http://tex.stackexchange.com/questions/28229/extend-a-language-with-additional-keywords
+\lstset{language=Java}
+\lstset{
+ morekeywords={if, else, fun, val, var, get, set, data, enum, when, inline, object, infix, override, is}
+}
+\lstset{%
+    backgroundcolor=\color{IJ_background},%
+    basicstyle=\color{IJ_text}\ttfamily,
+%    basicstyle=\small\ttfamily,%
+    keywordstyle=\color{IJ_keyword}\ttfamily,
+    stringstyle=\color{IJ_string}\ttfamily,
+    commentstyle=\color{IJ_comment}\ttfamily,
+% NO! as java vs kotlin issue :( identifierstyle=\color{IJ_identifier}\ttfamily,
+    numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt,%
+    framexleftmargin=12pt,
+    showstringspaces=false,
+    escapeinside=||
+}%
+%\lstset{framesep=10pt}
+%\lstset{xleftmargin=10pt,xrightmargin=10pt}
+%\lstset{emph={%  
+%    val, var%
+%    },emphstyle={\color{red}\bfseries\underbar}%
+%}%
+
+
+\lstdefinestyle{twosided}
+{
+  basicstyle=\color{IJ_text}\ttfamily\tiny, %or \small or \footnotesize etc.
+  numbers=none,
+  framexleftmargin=2pt
+}
