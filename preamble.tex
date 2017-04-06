@@ -12,6 +12,8 @@
 \usepackage{setspace}
 \usepackage{ulem} % strike through
 \usepackage{textpos}  % textblock
+%\usepackage{media9} % animated gifs
+\usepackage{movie15}
 
 
 % THEME
@@ -79,6 +81,9 @@
 \end{withoutheadline}
 }
 
+% #1 ... the filename to be included (no suffix needed, relative to images/ folder)
+% #2 ... caption below to be displayed
+% #3 ... OPTIONAL: if set, overrides the width parameter
 \newcommand{\fullimageCapt}[3]{
 \begin{withoutheadline}
 \frame{
