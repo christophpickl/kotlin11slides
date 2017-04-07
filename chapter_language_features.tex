@@ -6,6 +6,21 @@
 \frame{\frametitle{Features} 
   \begin{itemize}[<+->]
     \item Coroutines (experimental)
-    \item Type aliases
+    \item Type Aliases
+    \item Data Classes
+    \item Deconstruction
+    \item Syntactic Sugar % ignore lambda vars, underscore in numbers
   \end{itemize}
 }
+
+
+\begin{frame}[fragile] \frametitle{Type Aliases}
+Pre Kotlin 1.1:
+\pause
+\begin{lstlisting}
+val listeners = ArrayList<(Event) -> Unit>()|\pause|
+fun subscribe(listener : (Event) -> Unit) {
+  listeners += listener
+}
+\end{lstlisting}
+\end{frame}
