@@ -10,3 +10,36 @@
   
   \textit{Have a nice Kotlin!}
 }
+
+
+\fulltitle{One more thing \ldots}
+
+\begin{frame}[fragile] \frametitle{Logging the Kotlin way \texttt{;)}}
+
+First declare a Gradle Dependency:
+\begin{lstlisting}
+compile
+ "io.github.microutils:kotlin-logging:1.4.4"
+\end{lstlisting}
+\pause
+
+Write your own shortcut function:
+\begin{lstlisting}
+fun LOG(func: () -> Unit) =
+  KotlinLogging.logger(func)
+// define a live template in IntelliJ
+\end{lstlisting}
+\pause
+
+Simple usage:
+\begin{lstlisting}
+class Foo {
+  private val log = LOG {}
+  init {
+    log.debug { "proper target: $this" }
+  }
+}
+\end{lstlisting}
+\pause
+
+\end{frame}

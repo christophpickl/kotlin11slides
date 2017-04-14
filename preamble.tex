@@ -70,6 +70,28 @@
   \linespread{1}\selectfont % reset
 }
 
+
+\newenvironment{whiteframe}
+{
+\begin{withoutheadline}
+\begin{frame}
+%\begin{figure}[h]
+%\begin{center}
+\center
+}
+{
+%\end{center}
+%\end{figure}
+\end{frame}
+\end{withoutheadline}
+}
+
+\newcommand{\fulltitle}[1]{
+\begin{whiteframe}
+\Huge{#1}
+\end{whiteframe}
+}
+
 \newcommand{\fullimage}[1]{
 \begin{withoutheadline}
 \frame{
@@ -126,7 +148,7 @@
 % http://tex.stackexchange.com/questions/28229/extend-a-language-with-additional-keywords
 \lstset{language=Java}
 \lstset{
- morekeywords={if, else, fun, val, var, get, set, data, enum, when, inline, object, infix, override, is}
+ morekeywords={if, else, fun, val, var, get, set, data, enum, when, inline, object, infix, override, is, init}
 }
 \lstset{%
     backgroundcolor=\color{IJ_background},%
