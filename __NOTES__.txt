@@ -1,61 +1,64 @@
 
 
-see: https://github.com/christophpickl/awesomekotlin/blob/master/src/main/kotlin/com/github/christophpickl/awesomekotlin/kotlin11/
+- my code
+	https://github.com/christophpickl/awesomekotlin/blob/master/src/main/kotlin/com/github/christophpickl/awesomekotlin/kotlin11/
+- "What's New in Kotlin 1.1"
+	http://kotlinlang.org/docs/reference/whatsnew11.html
 
+
+TODO
+========================================================================
+- am anfang einfach auflistung von neuerungen in k11, dann die highlighten die durchgehen werden (keine struktur a la "intro - features - epilog")
+	https://blog.jetbrains.com/kotlin/2017/01/kotlin-1-1-whats-coming-in-the-standard-library/
+- https://github.com/Kotlin/KEEP/milestone/1
+- 
+- https://blog.jetbrains.com/kotlin/2017/03/kotlin-1-1/
+- https://blog.jetbrains.com/kotlin/2017/04/kotlin-1-1-is-also-for-android-developers/
 
 NOTES
 ========================================================================
-* kotlin 1.1 is backwards compatible
-* how to upgrade (gradle/maven, intellij, CLI)
-* -jvm-target 1.8 supported, but doesnt change anything yet
-* kotlin-stdlib-jre8 (instead kotlin-stdlib)
-* preserve parameter names: -java-parameters
-* `const val` will be inlined by compiler
-* script engine:
-	val engine = ScriptEngineManager().getEngineByExtension("kts")!!
-	engine.eval("val x = 3")
-	println(engine.eval("x + 2"))  // Prints out 5
-* kotlin-reflect.jar package moved to kotlin.reflect.full (old are deprecated and will be deleted with kotlin 1.2); why => in order to prepare for java9
 
 
 
-TODO read:
-	https://blog.jetbrains.com/kotlin/2017/01/kotlin-1-1-whats-coming-in-the-standard-library/
-
-https://github.com/Kotlin/KEEP/milestone/1
-http://kotlinlang.org/docs/reference/whatsnew11.html
-https://blog.jetbrains.com/kotlin/2017/03/kotlin-1-1/
-https://blog.jetbrains.com/kotlin/2017/04/kotlin-1-1-is-also-for-android-developers/
+AGENDA
 ========================================================================
-* javascript
-* tooling
+* jvm backend
+* standard library
+* javascript: with 1.1 JS target is no longer experimental (wont focus on that)
+* (tooling)
 
 * coroutines (experimental)
+* type aliases
 * bound callable references
 * improved data classes
 * improved sealed classes
-* type aliases
-* destructuring inside lambdas
+* destructuring in lambdas
 
-* underscore for unused variables (lambdas, destructuring)
+* underscore for unused parameters (lambdas, destructuring declarations)
 * underscore in numeral literals
-* type inference for getter properties
-* inline property accessors
+* shorter syntax for properties (type inference for getter properties)
 * local delegated properties
 
 * generic enum value access
 * @DslMarker to restrict lambda scope
 * mod is now rem
+* inline property accessors
 
-STD LIB
--------
-* string to number conversion: val port = System.getenv("PORT")?.toIntOrNull() ?: 80
-* onEach()
-* also(), takeIf(), takeUnless()
-* groupingBy()
-* toMap(), toMutableMap() // i already implemented that myself, didn't i?! ;)
-* minus operator for map
-* minOf(), maxOf()
-* list "comprehension": val squares = List(10) { index -> index * index }; val mutable = MutableList(10) { 0 }
-* Map.getValue(), withDefault
-* Array manipulation functions: contentEquals, contentHashCode, contentToString  (or deep)
+========================================================================
+
+
+
+ABOUT K11
+------------------------------------------------------------------------
+* general info
+	* released on X.XX (1.0 was released X years ago)
+	* kotlin 1.1 is backwards compatible
+* show how to upgrade (gradle/maven, intellij, CLI)
+* development changes
+	* -jvm-target 1.8 supported, but doesnt change anything yet
+	* kotlin-stdlib-jre8 (instead kotlin-stdlib)
+	* kotlin-reflect.jar package moved to kotlin.reflect.full (old are deprecated and will be deleted with kotlin 1.2); why => in order to prepare for java9
+	* preserve parameter names: -java-parameters
+	* `const val` will be inlined by compiler
+	
+
