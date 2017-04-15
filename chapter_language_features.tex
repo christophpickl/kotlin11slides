@@ -3,24 +3,64 @@
 
 \sektion{Language Features}
 
-\frame{\frametitle{Features} 
-  \begin{itemize}[<+->]
-    \item Coroutines (experimental)
-    \item Type Aliases
-    \item Data Classes
-    \item Deconstruction
-    \item Syntactic Sugar % ignore lambda vars, underscore in numbers
-  \end{itemize}
-}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}\frametitle{What we'll cover}
+  \begin{enumerate}[<+->]
+  	\item \textbf{Coroutines} (experimental)
+	\item Type \textbf{aliases}
+	\item Bound callable \textbf{references}
+	\item Improved \textbf{data} and \textbf{sealed} classes
+	\item \textbf{Destructuring} in lambdas
+	\item Local \textbf{delegated} properties
+	\item \textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
+	\item Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
+	\item Generic \textbf{enum} value access
+	\item Restrict lambda scope with \texttt{@DslMarker}
+  \end{enumerate}
+\end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Coroutines}
+Coroutines
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile] \frametitle{Type Aliases}
 Pre Kotlin 1.1:
-\pause
 \begin{lstlisting}
 val listeners = ArrayList<(Event) -> Unit>()|\pause|
 fun subscribe(listener : (Event) -> Unit) {
   listeners += listener
 }
 \end{lstlisting}
+\pause
+With Kotlin 1.1:
+\begin{lstlisting}
+
+val listeners = ArrayList<(Event) -> Unit>()|\pause|
+fun subscribe(listener : (Event) -> Unit) {
+  listeners += listener
+}
+\end{lstlisting}
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Bound callable references}
+Refs
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+% FRAMES:
+%	\item Improved \textbf{data} and \textbf{sealed} classes
+%	\item \textbf{Destructuring} in lambdas
+%	\item Local \textbf{delegated} properties
+%	\item \textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
+%	\item Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
+%	\item Generic \textbf{enum} value access
+%	\item Restrict lambda scope with \texttt{@DslMarker}

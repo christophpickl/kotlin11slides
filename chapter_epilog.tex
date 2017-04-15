@@ -1,12 +1,14 @@
 
 %\fullimageCapt{lighthouse}{A lighthouse on \href{https://en.wikipedia.org/wiki/Kotlin_Island}{Kotlin Island}, Russia}{}
 
+\fulltitle{That's it}
+
 \frame{\frametitle{Further Reading} 
   \begin{itemize}[<+->]
     \item Slides at GitHub \\ \url{https://github.com/christophpickl/kotlin11slides}
-    \item Andrey demos Kotlin 1.1 \\ \url{https://youtube.com/watch?v=zpyJHSR-5ts}
+    \item Kotlin 1.1 sample code \\ \href{https://github.com/christophpickl/awesomekotlin/blob/master/src/main/kotlin/com/github/christophpickl/awesomekotlin/kotlin11/}{https://github.com/christophpickl/.../awesomekotlin/kotlin11}
     \item Official Release Page \\ \small{\url{https://kotlinlang.org/docs/reference/whatsnew11.html}}
-    \item Some nice articles
+    \item Andrey demos Kotlin 1.1 \\ \url{https://youtube.com/watch?v=zpyJHSR-5ts}
   \end{itemize}
   
   \vspace{1cm}
@@ -16,7 +18,7 @@
 
 \fulltitle{One more thing \ldots}
 
-\begin{frame}[fragile] \frametitle{Logging the Kotlin way \texttt{;)}}
+\begin{frame}[fragile] \frametitle{Logging the Kotlin way}
 
 First declare a Gradle Dependency:
 \begin{lstlisting}
@@ -29,7 +31,7 @@ Write your own shortcut function:
 \begin{lstlisting}
 fun LOG(func: () -> Unit) =
   KotlinLogging.logger(func)
-// define a live template in IntelliJ
+// define a code template in your IDE
 \end{lstlisting}
 \pause
 
@@ -38,7 +40,7 @@ Simple usage:
 class Foo {
   private val log = LOG {}
   init {
-    log.debug { "proper target: $this" }
+    log.debug { "lazy evaluated $this" }
   }
 }
 \end{lstlisting}

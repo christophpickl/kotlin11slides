@@ -10,55 +10,9 @@ TODO
 ========================================================================
 - am anfang einfach auflistung von neuerungen in k11, dann die highlighten die durchgehen werden (keine struktur a la "intro - features - epilog")
 	https://blog.jetbrains.com/kotlin/2017/01/kotlin-1-1-whats-coming-in-the-standard-library/
-- https://github.com/Kotlin/KEEP/milestone/1
-- 
-- https://blog.jetbrains.com/kotlin/2017/03/kotlin-1-1/
-- https://blog.jetbrains.com/kotlin/2017/04/kotlin-1-1-is-also-for-android-developers/
+! show how to upgrade (gradle/maven, intellij, CLI)
 
-NOTES
-========================================================================
-
-
-
-AGENDA
-========================================================================
-* jvm backend
-* standard library
-* javascript: with 1.1 JS target is no longer experimental (wont focus on that)
-* (tooling)
-
-* coroutines (experimental)
-* type aliases
-* bound callable references
-* improved data classes
-* improved sealed classes
-* destructuring in lambdas
-
-* underscore for unused parameters (lambdas, destructuring declarations)
-* underscore in numeral literals
-* shorter syntax for properties (type inference for getter properties)
-* local delegated properties
-
-* generic enum value access
-* @DslMarker to restrict lambda scope
-* mod is now rem
-* inline property accessors
-
-========================================================================
-
-
-
-ABOUT K11
-------------------------------------------------------------------------
-* general info
-	* released on X.XX (1.0 was released X years ago)
-	* kotlin 1.1 is backwards compatible
-* show how to upgrade (gradle/maven, intellij, CLI)
-* development changes
-	* -jvm-target 1.8 supported, but doesnt change anything yet
-	* kotlin-stdlib-jre8 (instead kotlin-stdlib)
-	* kotlin-reflect.jar package moved to kotlin.reflect.full (old are deprecated and will be deleted with kotlin 1.2); why => in order to prepare for java9
-	* preserve parameter names: -java-parameters
-	* `const val` will be inlined by compiler
-	
+- READ https://github.com/Kotlin/KEEP/milestone/1
+- READ https://blog.jetbrains.com/kotlin/2017/03/kotlin-1-1/
+- READ https://blog.jetbrains.com/kotlin/2017/04/kotlin-1-1-is-also-for-android-developers/
 

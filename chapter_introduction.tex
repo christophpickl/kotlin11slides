@@ -2,49 +2,42 @@
 \fullimageCapt{kotlin11_banner}{\Large{(language for the \textit{masses})}}{}
 % NOTE: 50% JVM, 50% Android (JS now non-experimental/beta anymore)
 
-%\sektion{Introduction}
 
+	
+	
 \frame{\frametitle{Kotlin 1.1 is out} 
   \begin{itemize}[<+->]
-    \item Kotlin 1.0 was released 1 year and a bit ago
-    \item Release date was 1.3.2017
-    \item Current 1.1.1 bugfix release two weeks afterwards
-    % 1.0 RC ... 4.2.2016
-    % 1.0 ... 15.2.2016
-    % 1.0.1 ... 16.3..2016
-    % 1.0.2 ... .13.5.2016
-    % 1.0.3 ... .30.6.2016
-    % 1.0.4 ... 22.9.2016
-    % 1.0.5 ... 8.11.2016
-    % 1.0.6 ... 27.12.2016
-    % 1.0.7 ... 15.3.2017
-    % 1.1 RC ... 17.2.2017
-    % 1.1 ... 1.3.2017
-    % 1.1.1 ... 14.3.2017 bugfix update
+    \item Released on 1.3.2017 (1.0 about a year ago)
 
+    \item Current 1.1.1 bugfix release two weeks afterwards
     \item 100\% backwards compatible with 1.0    
     % binary compatibility will always be given, but backwards compatibility? like in java for 20 years and carry on all the legacy stuff just to never break user code?
-%* 30 people working on kotlin at jetbreains
-%* gradle/spring working with kotlin (kobalt FTW)
-
     \begin{itemize}
     	\item Commitment to \textbf{binary compatibility}
 	\item Kotlin \texttt{2.0}? \textit{A possibility, not a plan!} % containing bigger/non-backwards-compatible language changes
 	\item Migration tools will be provided % want to integrate a "migration tool", which gets rid of warnings when using old language constructs
     \end{itemize}
-       
     \item Currently working on \href{https://blog.jetbrains.com/kotlin/2017/04/kotlinnative-tech-preview-kotlin-without-a-vm/}{kotlin-native}
-    % (via LLVM) (seems kind like a problem to them to support JVM/JS/native, keep it to a minimum and add extensions)
-    % 
-
+	    % (via LLVM) (seems kind like a problem to them to support JVM/JS/native, keep it to a minimum and add extensions)
+    \item Gradle and Spring are using Kotlin, Kobalt is coming
+    % 30 people working on kotlin at jetbreains
   \end{itemize}
 }
 
 \frame{\frametitle{JVM News}
   \begin{itemize}[<+->]
-    \item java 8
-    \item std libs
-    \item compiler option
+    \item \textbf{Java 8} bytecode via compiler option: \texttt{-jvm-target 1.8} % has no effect yet
+    \item \textbf{JDK 8} classes via dependency: \texttt{kotlin-stdlib-jre8} % instead kotlin-stdlib
+    \item Preserve \textbf{parameter names} via \texttt{-java-parameters}
+    \item \texttt{const val} are now being \textbf{inlined} by the compiler
+    \item Structural changes for \texttt{\textbf{kotlin-reflect.jar}} (Java 9)
+    \begin{itemize}
+	\item \texttt{kotlin.reflect} renamed to \texttt{kotlin.reflect.full}
+	\item Old \textbf{deprecated} and to be removed with Kotlin \texttt{1.2}
+	% classes moved from kotlin.reflect to kotlin.reflect.full (old are deprecated and will be deleted with kotlin 1.2)
+	% core classes like KClass not affected, as part of std lib
+	% why => in order to prepare for java9, the jigsaw/modules feature; 
+    \end{itemize}
   \end{itemize}
 }
 
