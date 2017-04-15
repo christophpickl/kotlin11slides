@@ -1,18 +1,16 @@
 
 \sektion{Standard Library}
 % NOTE: 50% JVM, 50% Android (JS now non-experimental/beta anymore)
-
-
 	
-\frame{\frametitle{Overview}
+\frame{\frametitle{What we'll cover}
   \begin{enumerate}[<+->]
-    \item Number conversion \texttt{toXxxOrNull()}
+    \item Nullable number conversion
     \item \texttt{also()}, \texttt{takeIf()}, \texttt{takeUnless()}
     \item \texttt{minOf()}, \texttt{maxOf()}
     \item \texttt{onEach()}
     \item \texttt{groupingBy()}
-    \item List comprehension
     \item Map functions % Map.toMap(), Map.toMutableMap(), Map.minus(), Map.getValue(), Map.withDefault()
+    \item List comprehension
     \item Array manipulation
     \item Base classes for collections
     \item \texttt{mod} renamed to \texttt{rem}
@@ -20,20 +18,231 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile] \frametitle{Number conversion}
-Number conversion
+\begin{frame}[fragile] \frametitle{Nullable number conversion}
+Conversion avilable for: Byte, Short, Int, Long, Float, Double
 \begin{lstlisting}
-some code
+"x".toIntOrNull() ?: 42 // = 42
+
+// delegates to java.lang.Integer.parseInt
+"x".toInt() // NumberFormatException|\pause|
+
+val radix = 2 // 2..36
+// radix2 = 101010, radix16 = 2a
+println(42.toString(radix))
+// radix2 = 3, radix16 = 17
+println("11".toIntOrNull(radix))
 \end{lstlisting}
 \end{frame}
 
-%    \item Number conversion \texttt{toXxxOrNull()}
-%    \item \texttt{also()}, \texttt{takeIf()}, \texttt{takeUnless()}
-%    \item \texttt{minOf()}, \texttt{maxOf()}
-%    \item \texttt{onEach()}
-%    \item \texttt{groupingBy()}
-%    \item List comprehension
-%    \item Map functions % Map.toMap(), Map.toMutableMap(), Map.minus(), Map.getValue(), Map.withDefault()
-%    \item Array manipulation
-%    \item Base classes for collections
-%    \item \texttt{mod} renamed to \texttt{rem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{\texttt{also()}}
+Same as \texttt{apply()} but without changing the \texttt{this} reference.
+\begin{lstlisting}
+val a1 = "a".apply {
+  "b".apply {
+    this // "b"
+    @Suppress("LABEL_NAME_CLASH")
+    this@apply // "b" :(
+  }
+}|\pause|
+val a2 = "a".also { outer ->
+  "b".also {
+    it // "b"
+    outer // "a" :)
+  }
+}
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{\texttt{takeIf()} and \texttt{takeUnless()}}
+\texttt{takeIf()} is like \texttt{filter()} but acts on a singlue value and returns \texttt{null} on mismatch. \texttt{takeUnless()} simply inverts the condition.
+\begin{lstlisting}
+val file = File("path")
+if (!file.exists()) {
+  return false
+}|\pause|
+
+// takeIf works well with elvis operator
+val file = File("path").takeIf(File::exists)
+  ?: return false
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Keyword highlighter using \texttt{takeIf()}}
+\begin{lstlisting}
+val input = "Kotlin"
+val keyword = "in"|\pause|
+
+val index = input.indexOf(keyword)
+    .takeIf { it >= 0 } ?: error()|\pause|
+//  .takeUnless { it < 0 } ?: error()|\pause|
+
+println("'$keyword' was found in '$input'")
+println(input)
+println(" ".repeat(index) + "^")
+// 'in' was found in 'Kotlin'
+// Kotlin
+//     ^
+\end{lstlisting}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{\texttt{minOf()} and \texttt{maxOf()}}
+\begin{lstlisting}
+val l1 = listOf("one")
+val l2 = listOf("0", "1")
+val l3 = listOf("x", "y", "z")
+
+minOf(l1.size, l2.size)
+Math.min(l1.size, l2.size)
+
+minOf(l1.size, l2.size, l3.size)
+Math.min(l1.size, Math.min(l2.size, l3.size))
+
+// minOf/maxOf supports only 2-3 values :-/
+
+minOf(l1, l2, compareBy { it.size })
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{\texttt{onEach()}}
+\footnotesize{\texttt{fun <T, I : Iterable<T>> I.onEach(action: (T) -> Unit): I}} \\
+\footnotesize{\texttt{fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit}}
+\normalsize{}
+\begin{lstlisting}
+listOf("foobar", "foo")
+  .filter { it.endsWith("bar") }
+  // chain item processing
+  .onEach { println("Found item: $it") }
+  .forEach { /* finally operate on them */ }
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{\texttt{groupingBy()}}
+\footnotesize{\texttt{fun <T, K> Iterable<T>.groupingBy(key: (T) -> K): Grouping<T, K>}} \\
+\footnotesize{\texttt{fun <T, K> Iterable<T>.groupBy(key: (T) -> K): Map<K, List<T>>}}
+\begin{lstlisting}
+val list = listOf("anna", "otto", "oscar")
+
+list
+  .groupBy(String::first)
+  .mapValues { (_, list) -> list.size } // a=1, o=2
+  // creates intermediate map|\pause|
+
+list
+  .groupingBy(String::first)
+  .eachCount() // invokes foldTo()
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Map functions}
+\texttt{toMap()}, \texttt{toMutableMap()}, minus, \texttt{getValue()}, \texttt{withDefault()}
+\begin{lstlisting}
+var map = mapOf("x" to 1)
+map.toMap() // create a copy
+map.toMutableMap() // create a mutable copy
+
+// plus already worked
+map += ("y" to 2)
+// now minus also supported
+map -= "y"
+
+map.getValue("y") // throws
+val map2 = map.withDefault { "!\$it!" }
+map2.getValue("y") // !y!
+\end{lstlisting}
+ % AD MINUS: loses ability to access previous value
+% AD getValue: NoSuchElementException.message: "Key two is missing in the map."
+%                       would be nice, if there was a custom exception type which got the key as an accessible field (string parsing, really?!)
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Something I'm missing here \ldots}
+Create a mutable (!) map based on a list of pairs.
+\begin{lstlisting}
+val list: Pair<String, Int> = listOf("x" to 1)
+list.toMap() // already existing
+list.toMutableMap() // does NOT exist|\pause|
+
+// let's workaround
+fun <K, V> Iterable<Pair<K, V>>.toMutableMap(): MutableMap<K, V> {
+  val immutableMap = toMap()
+  val map = HashMap<K, V>(immutableMap.size)
+  map.putAll(immutableMap)
+  return map
+}
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{List comprehension}
+\footnotesize{\texttt{fun <T> List(size: Int, init: (index: Int) -> T): List<T>}}
+\begin{lstlisting}
+// already existed for arrays
+IntArray(4) { it * 2 }.toList()
+// [0, 2, 4, 6]|\pause|
+
+// now for lists as well
+List(4) { it * 2 }
+MutableList(4) { it * 2 }
+\end{lstlisting}
+\small{(Still not the same as in Haskell)}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Array manipulation}
+New methods: \texttt{content[Deep](Equals|HashCode|ToString)}
+\begin{lstlisting}
+val a1 = arrayOf("a", "b")
+val a2 = arrayOf(arrayOf("a"), arrayOf("b"))
+
+a1.toString() // [Ljava.lang.String;\@1b3af
+a1.contentToString() // [a, b]
+a2.contentDeepToString() // [[a], [b]]
+
+// ... equals, hashCode the same ...
+\end{lstlisting}
+\small{(Actually just a delegation to \texttt{java.util.Arrays})}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile] \frametitle{Base classes for collections}
+New classes: \texttt{Abstract[Mutable](Collection|List|Set|Map)}
+\begin{lstlisting}
+// skeletal implementation of [List]
+val listWithOneElement: List<String> =
+  object : AbstractList<String>() {
+    override val size: Int
+      get() = 1
+    override fun get(index: Int): String {
+      return "always foo"
+    }
+  }
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% https://youtrack.jetbrains.com/issue/KT-14650 ... 
+\begin{frame}[fragile] \frametitle{\texttt{mod} renamed to \texttt{rem}}
+ \texttt{mod} function on integral types is inconsistent with \texttt{BigInteger}:
+\begin{lstlisting}
+val minus3 = BigInteger.valueOf(-3)
+val plus5 = BigInteger.valueOf(5)
+
+minus3.mod(plus5) // 2
+% Int.mod() was deprecated
+minus3.toInt().mod(plus5.toInt()) // -3
+
+minus3.rem(plus5) // -3
+minus3.toInt().rem(plus5.toInt()) // -3
+\end{lstlisting}
+\small{(Math nerds know their \href{https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf}{ecuclidean rings})}
+\end{frame}

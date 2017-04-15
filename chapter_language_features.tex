@@ -12,43 +12,52 @@
 	\item Improved \textbf{data} and \textbf{sealed} classes
 	\item \textbf{Destructuring} in lambdas
 	\item Local \textbf{delegated} properties
-	\item \textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
+	\item \textbf{Underscore} for numeral literals / unused parameters % (lambdas, destructuring declarations)
 	\item Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
 	\item Generic \textbf{enum} value access
 	\item Restrict lambda scope with \texttt{@DslMarker}
   \end{enumerate}
 \end{frame}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile] \frametitle{Coroutines}
-Coroutines
+
+\fullimageCapt{callback_hell}{Source: \url{https://collinmakersquare.wordpress.com}}{10cm}
+
+\begin{frame}[fragile] \frametitle{Coroutines overview}
+\begin{itemize}
+	\item Coroutines are still marked as experimental.
+	% necessary? dependency  \texttt{kotlinx-coroutines-core}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile] \frametitle{Coroutines sample}
+% necessary? dependency  \texttt{kotlinx-coroutines-core}
 \begin{lstlisting}
 some code
 \end{lstlisting}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[fragile] \frametitle{Type Aliases}
-Pre Kotlin 1.1:
-\begin{lstlisting}
-val listeners = ArrayList<(Event) -> Unit>()|\pause|
-fun subscribe(listener : (Event) -> Unit) {
-  listeners += listener
-}
-\end{lstlisting}
-\pause
-With Kotlin 1.1:
-\begin{lstlisting}
 
-val listeners = ArrayList<(Event) -> Unit>()|\pause|
-fun subscribe(listener : (Event) -> Unit) {
-  listeners += listener
+\begin{frame}[fragile] \frametitle{Type aliases}
+\begin{lstlisting}
+typealias StatusCode = Int|\pause|
+fun request(expected: StatusCode) {}
+request(200)|\pause|
+
+typealias Listener = (Event) -> Unit|\pause|
+fun subscribe(listener : Listener) {}
+fun subscribe(listener : (Event) -> Unit) {}|\pause|
+
+class Outer {
+  typealias Nope = Double // compile error
 }
 \end{lstlisting}
 \end{frame}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}[fragile] \frametitle{Bound callable references}
 Refs
 \begin{lstlisting}
@@ -56,11 +65,66 @@ some code
 \end{lstlisting}
 \end{frame}
 
-% FRAMES:
-%	\item Improved \textbf{data} and \textbf{sealed} classes
-%	\item \textbf{Destructuring} in lambdas
-%	\item Local \textbf{delegated} properties
-%	\item \textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
-%	\item Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
-%	\item Generic \textbf{enum} value access
-%	\item Restrict lambda scope with \texttt{@DslMarker}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{Improved data and sealed classes}
+XXX
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{Destructuring in lambdas}
+XXX
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{Local delegated properties}
+XXX
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{Underscores}
+\textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{Enhanced Properties}
+Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{Generic enum value access}
+XXX
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile] \frametitle{DslMarker}
+Restrict lambda scope with \texttt{@DslMarker}
+\begin{lstlisting}
+some code
+\end{lstlisting}
+\end{frame}
+
