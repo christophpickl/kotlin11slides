@@ -24,11 +24,16 @@
 
 \fullimageCapt{callback_hell}{Source: \url{https://collinmakersquare.wordpress.com}}{10cm}
 
-\begin{frame}[fragile] \frametitle{Coroutines overview}
+\begin{frame}[fragile] \frametitle{Coroutines are \ldots}
 \begin{itemize}
-	\item Coroutines are still marked as experimental.
+	\item very lightweight threads (like \href{https://en.wikipedia.org/wiki/Fiber_(computer_science)}{fibers}).
+	\item a very expressive tool for implementing asynchronous behavior. % make non-blocking asynchronous code as straightforward as plain synchronous code
+	\item still marked as experimental.
+	\item very low-level thing to build own framework above it
+	% generators/yield from Python, channels/select from Go and async/await from C#
 	% necessary? dependency  \texttt{kotlinx-coroutines-core}
 \end{itemize}
+Keywords: suspending
 \end{frame}
 
 \begin{frame}[fragile] \frametitle{Coroutines sample}
@@ -97,7 +102,11 @@ some code
 \begin{frame}[fragile] \frametitle{Underscores}
 \textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
 \begin{lstlisting}
-some code
+val creditCardNumber = 1234_5678_9012_3456L
+val hexBytes = 0xFF_EC_DE_5E
+val hexWords = 0xCAFE_BABE
+val maxval = 0x7fff_ffff_ffff_ffffL
+val bytes = 0b0110_1001;
 \end{lstlisting}
 \end{frame}
 
