@@ -22,3 +22,8 @@ LINKS
 * "What's New in Kotlin 1.1"
 	http://kotlinlang.org/docs/reference/whatsnew11.html
 
+
+
+COROUTINES
+========================================================================
+* also named: async/await/yield, fibers, [stackless] continuation

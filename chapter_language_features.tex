@@ -26,26 +26,77 @@
 
 \begin{frame}[fragile] \frametitle{Coroutines are \ldots}
 \begin{itemize}
-	\item very lightweight threads (like \href{https://en.wikipedia.org/wiki/Fiber_(computer_science)}{fibers}).
-	\item a very expressive tool for implementing asynchronous behavior. % make non-blocking asynchronous code as straightforward as plain synchronous code
-	\item still marked as experimental.
-	\item very low-level thing to build own framework above it
-	% generators/yield from Python, channels/select from Go and async/await from C#
-	% necessary? dependency  \texttt{kotlinx-coroutines-core}
+	\item very lightweight threads (like \href{https://en.wikipedia.org/wiki/Fiber_(computer_science)}{fibers})
+	\item still marked as experimental
+	\item very low-level designed so that frameworks can build upon it
+	\begin{itemize}
+		\item Extensions for Android, JavaFX, \ldots
+		\item like \texttt{async/await} from C\# or \texttt{yield} from Python
+	\end{itemize}
+	\item a very expressive tool for implementing asynchronous behavior
+	% make non-blocking asynchronous code as straightforward as plain synchronous code
+	\begin{itemize}
+		% not leading to "nested ladder pattern"
+		\item better syntax, look like regular function invocations
+	\end{itemize}
+	% necessary dependency? \texttt{kotlinx-coroutines-core}
 \end{itemize}
-Keywords: suspending
 \end{frame}
 
-\begin{frame}[fragile] \frametitle{Coroutines sample}
-% necessary? dependency  \texttt{kotlinx-coroutines-core}
+\begin{frame}[fragile] \frametitle{Coroutines async load}
+Coroutines scale pretty good processing loads of async operations.
 \begin{lstlisting}
-some code
+val jobs = List(100_000) {
+  async(CommonPool) {
+    delay(1000L)
+    1
+  }
+}
+
+runBlocking { // bridge async world
+  println(jobs.sumBy {
+    it.await()
+  })
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile] \frametitle{Threads instead}
+The same code with good old threads will \ldots
+\begin{lstlisting}
+for (i in 1..100_000) {
+  thread(start = true) {
+    Thread.sleep(1000)
+  }
+}|\pause|
+\end{lstlisting}
+\textbf{OutOfMemoryError}: unable to create new native thread!
+\end{frame}
+
+\fullimageCapt{coroutines_processing}{Suspendable computation explained}{10cm}
+
+
+\begin{frame}[fragile] \frametitle{Just some coroutine sample}
+\begin{lstlisting}
+suspend fun greet(name: String): String {
+  delay(randomTime)
+  return "Hello $name!"
+}|\pause|
+
+runBlocking {
+  listOf("foobar", "World").map { name ->
+    async(CommonPool) {
+      greet(name)
+    }
+  }.map { it.await() }.joinToString()
+}
 \end{lstlisting}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Type aliases}
+Add improved readability through custom naming.
 \begin{lstlisting}
 typealias StatusCode = Int|\pause|
 fun request(expected: StatusCode) {}
@@ -64,50 +115,89 @@ class Outer {
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Bound callable references}
-Refs
+Reference a member of an object instance.
 \begin{lstlisting}
-some code
+val numberRegex = "\\d+".toRegex()
+val list = listOf("a", "1")|\pause|
+
+// before kotlin11
+list.filter { numberRegex.matches(it) }
+  .forEach(::println)|\pause|
+
+// with kotlin11
+list.filter(numberRegex::matches)
+  .forEach(::println)
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/issues/5}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Improved data and sealed classes}
-XXX
+Subtypes outside of \texttt{sealed} class and \texttt{data} class inheritance added.
 \begin{lstlisting}
-some code
+sealed class Expression|\pause|
+
+// sealed subs can be declared outside
+object Operator : Expression()|\pause|
+
+// a data class can now extend another class
+data class Operand(val symbol: String)
+  : Expression()
 \end{lstlisting}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Destructuring in lambdas}
-XXX
+Destructuring now works in lambdas (and for data class).
 \begin{lstlisting}
-some code
+val map = mapOf(1 to "one")
+
+// before kotlin11
+map.mapValues { entry ->
+  val (key, value) = entry
+  "$key = $value"
+}|\pause|
+
+// with kotlin11
+map.mapValues { (key, value) -> 
+  "$key = $value" }
 \end{lstlisting}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Local delegated properties}
-XXX
+Not only for (class) properties, anymorebut also for local variables.
 \begin{lstlisting}
-some code
+fun exec(stringProvider: () -> String) {
+  val string by lazy(stringProvider)
+  
+  // short circuit evaluation FTW
+  if (condition() && string.isValid()) {
+    // computed result will be cached
+    println(string)
+  }
+}
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/local-delegated-properties.md}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Underscores}
-\textbf{Underscore} for unused parameters / numeral literals % (lambdas, destructuring declarations)
+Underscore for numeral literals and unused parameters.  % (lambdas, destructuring declarations)
 \begin{lstlisting}
 val creditCardNumber = 1234_5678_9012_3456L
 val hexBytes = 0xFF_EC_DE_5E
 val hexWords = 0xCAFE_BABE
 val maxval = 0x7fff_ffff_ffff_ffffL
-val bytes = 0b0110_1001;
+val bytes = 0b0110_1001;|\pause|
+
+mapOf(1 to "one").map { (k, _) -> k }
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/underscores-in-numeric-literals.md}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,25 +205,95 @@ val bytes = 0b0110_1001;
 \begin{frame}[fragile] \frametitle{Enhanced Properties}
 Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
 \begin{lstlisting}
-some code
+data class Person(val age: Int) {
+  // before kotlin11
+  val isAdult get(): Boolean = age >= 18
+
+  // with kotlin11
+  val isAdult get() = age >= 18
+}|\pause|
+
+val <T> List<T>.lastIndex: Int
+    inline get() = this.size - 1
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/inline-properties.md}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Generic enum value access}
-XXX
+Supported via \texttt{enumValueOf()} and \texttt{enumValues()}.
 \begin{lstlisting}
-some code
+enum class RGB { RED, GREEN, BLUE }
+
+val red: RGB = enumValueOf("RED")|\pause|
+val rgbs: Array<RGB> = enumValues()|\pause|
+
+println(enumValues<RGB>()
+  .joinToString(transform = RGB::name))
+  // RED, GREEN, BLUE
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/generic-values-and-valueof-for-enums.md}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[fragile] \frametitle{DslMarker}
-Restrict lambda scope with \texttt{@DslMarker}
+\begin{frame}[fragile] \frametitle{DSLs -- The Problem}
+The inner scope always inherits the context of the outer scope:
 \begin{lstlisting}
-some code
+html {
+  head {
+    head {
+      // this should not be able
+      // as it makes no sense
+    }
+  }
+}
+\end{lstlisting}
+When within \texttt{head} let's remove the context of \texttt{html}!
+\end{frame}
+
+
+\begin{frame}[fragile] \frametitle{Casual implementation of HTML DSL}
+\begin{lstlisting}
+fun html(code: HtmlContext.() -> Unit) {
+  code(HtmlContext())
+}
+class HtmlContext {
+  fun head(code: HeadContext.() -> Unit) {
+    code(HeadContext())
+  }
+}
+class HeadContext { }
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile] \frametitle{Restrict scope with @DslMarker}
+\begin{lstlisting}
+fun html(code: HtmlContext.() -> Unit) {
+  code(HtmlContext())
+}
+@MyDslMarker class HtmlContext {
+  fun head(code: HeadContext.() -> Unit) {
+    code(HeadContext())
+  }
+}
+@MyDslMarker class HeadContext { }
+@DslMarker annotation class MyDslMarker
+\end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/scope-control-for-implicit-receivers.md}}
+\end{frame}
+
+\begin{frame}[fragile] \frametitle{Humans still remain in control}
+If you still want to access the \texttt{html} context you can still do so.
+\begin{lstlisting}
+html {
+  head {
+    // head { } compile error!
+    this@html.head { } // enforce
+  }
+}
 \end{lstlisting}
 \end{frame}
 
