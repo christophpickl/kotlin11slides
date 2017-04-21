@@ -98,17 +98,16 @@ println(" ".repeat(index) + "^")
 \begin{lstlisting}
 val l1 = listOf("one")
 val l2 = listOf("0", "1")
-val l3 = listOf("x", "y", "z")
+val l3 = listOf("x", "y", "z")|\pause|
 
 // delegates to Math.min for 2 values
 minOf(l1.size, l2.size)
-Math.min(l1.size, l2.size)
+Math.min(l1.size, l2.size)|\pause|
 
 minOf(l1.size, l2.size, l3.size)
-Math.min(l1.size, Math.min(l2.size, l3.size))
+Math.min(l1.size, Math.min(l2.size, l3.size))|\pause|
 
 // minOf/maxOf supports only 2-3 values :-/
-
 minOf(l1, l2, compareBy { it.size })
 \end{lstlisting}
 So why not simply use: \texttt{Iterable<T>.min(): T?}
@@ -117,7 +116,7 @@ So why not simply use: \texttt{Iterable<T>.min(): T?}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile] \frametitle{\texttt{onEach()}}
 \footnotesize{\texttt{fun <T, I : Iterable<T>> I.onEach(action: (T) -> Unit): I}} \\
-\footnotesize{\texttt{fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit}}
+\footnotesize{\texttt{fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit}}\pause
 \normalsize{}
 \begin{lstlisting}
 listOf("foobar", "foo")
@@ -132,7 +131,7 @@ listOf("foobar", "foo")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile] \frametitle{\texttt{groupingBy()}}
 \footnotesize{\texttt{fun <T, K> Iterable<T>.groupingBy(key: (T) -> K): Grouping<T, K>}} \\
-\footnotesize{\texttt{fun <T, K> Iterable<T>.groupBy(key: (T) -> K): Map<K, List<T>>}}
+\footnotesize{\texttt{fun <T, K> Iterable<T>.groupBy(key: (T) -> K): Map<K, List<T>>}}\pause
 \begin{lstlisting}
 val list = listOf("anna", "otto", "oscar")
 
@@ -153,15 +152,15 @@ list
 \begin{lstlisting}
 var map = mapOf("x" to 1)
 map.toMap() // create a copy
-map.toMutableMap() // create a mutable copy
+map.toMutableMap() // create a mutable copy|\pause|
 
 // plus already worked
 map += ("y" to 2)
 // now minus also supported
-map -= "y"
+map -= "y"|\pause|
 
-map.getValue("y") // throws
-val map2 = map.withDefault { "!\$it!" }
+map.getValue("y") // throws|\pause|
+val map2 = map.withDefault { "!\$it!" }|\pause|
 map2.getValue("y") // !y!
 \end{lstlisting}
 \smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/map-copying.md}}
@@ -174,23 +173,20 @@ map2.getValue("y") // !y!
 \begin{frame}[fragile] \frametitle{Something I'm missing here \ldots}
 Create a mutable (!) map based on a list of pairs.
 \begin{lstlisting}
-val list: Pair<String, Int> = listOf("x" to 1)
-list.toMap() // already existing
-list.toMutableMap() // does NOT exist|\pause|
+val x: Pair<String, Int> = listOf("x" to 1)
+x.toMap() // already existing
+x.toMutableMap() // does NOT exist :(|\pause|
 
-// let's workaround
-fun <K, V> Iterable<Pair<K, V>>.toMutableMap(): MutableMap<K, V> {
-  val immutableMap = toMap()
-  val map = HashMap<K, V>(immutableMap.size)
-  map.putAll(immutableMap)
-  return map
-}
+// let's workaround this :)
+fun <K, V> Iterable<Pair<K, V>>
+  .toMutableMap()
+    = toMap().toMutableMap()
 \end{lstlisting}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile] \frametitle{List comprehension}
-\footnotesize{\texttt{fun <T> List(size: Int, init: (index: Int) -> T): List<T>}}
+\footnotesize{\texttt{fun <T> List(size: Int, init: (index: Int) -> T): List<T>}}\pause
 \begin{lstlisting}
 // already existed for arrays
 IntArray(4) { it * 2 }.toList()
@@ -207,14 +203,17 @@ MutableList(4) { it * 2 }
 \begin{frame}[fragile] \frametitle{Array manipulation}
 New methods: \texttt{content[Deep](Equals|HashCode|ToString)}
 \begin{lstlisting}
-val a1 = arrayOf("a", "b")
-val a2 = arrayOf(arrayOf("a"), arrayOf("b"))
+val a1 = arrayOf("a", "b")|\pause|
+a1.toString()
+// [Ljava.lang.String;\@1b3af|\pause|
+a1.contentToString()
+// [a, b]|\pause|
 
-a1.toString() // [Ljava.lang.String;\@1b3af
-a1.contentToString() // [a, b]
-a2.contentDeepToString() // [[a], [b]]
-
-// ... equals, hashCode the same ...
+val a2 = arrayOf(arrayOf("a"), arrayOf("b"))|\pause|
+a2.contentToString()
+// [[Ljava.lang.String;@6b884d57, [L...|\pause|
+a2.contentDeepToString()
+// [[a], [b]]|\pause|
 \end{lstlisting}
 \small{(Actually just a delegation to \texttt{java.util.Arrays})}
 \end{frame}
@@ -241,13 +240,13 @@ val listWithOneElement: List<String> =
 % https://youtrack.jetbrains.com/issue/KT-14650 ... 
 \begin{frame}[fragile] \frametitle{\texttt{mod} renamed to \texttt{rem}}
  \texttt{mod} function on integral types is inconsistent with \texttt{BigInteger}:
+ % Int.mod() was deprecated
 \begin{lstlisting}
 val minus3 = BigInteger.valueOf(-3)
-val plus5 = BigInteger.valueOf(5)
+val plus5 = BigInteger.valueOf(5)|\pause|
 
 minus3.mod(plus5) // 2
-% Int.mod() was deprecated
-minus3.toInt().mod(plus5.toInt()) // -3
+minus3.toInt().mod(plus5.toInt()) // -3|\pause|
 
 minus3.rem(plus5) // -3
 minus3.toInt().rem(plus5.toInt()) // -3

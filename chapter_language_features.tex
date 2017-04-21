@@ -6,13 +6,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}\frametitle{What we'll cover}
   \begin{enumerate}[<+->]
-  	\item \textbf{Coroutines} (experimental)
-	\item Type \textbf{aliases}
+  	\item Async processing with \textbf{coroutines}
+	\item Define own \textbf{type aliases}
 	\item Bound callable \textbf{references}
-	\item Improved \textbf{data} and \textbf{sealed} classes
+	\item Improvements for \textbf{data} and \textbf{sealed} classes
 	\item \textbf{Destructuring} in lambdas
 	\item Local \textbf{delegated} properties
-	\item \textbf{Underscore} for numeral literals / unused parameters % (lambdas, destructuring declarations)
+	\item \textbf{Underscore} for numbers and parameters % (lambdas, destructuring declarations)
 	\item Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
 	\item Generic \textbf{enum} value access
 	\item Restrict lambda scope with \texttt{@DslMarker}
@@ -22,38 +22,37 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\fullimageCapt{callback_hell}{Source: \url{https://collinmakersquare.wordpress.com}}{10cm}
-
 \begin{frame}[fragile] \frametitle{Coroutines are \ldots}
-\begin{itemize}
-	\item very lightweight threads (like \href{https://en.wikipedia.org/wiki/Fiber_(computer_science)}{fibers})
-	\item still marked as experimental
-	\item very low-level designed so that frameworks can build upon it
+\begin{itemize}[<+->]
+	\item an \textbf{expressive} tool for implementing \textbf{asynchronous} behavior
 	\begin{itemize}
-		\item Extensions for Android, JavaFX, \ldots
-		\item like \texttt{async/await} from C\# or \texttt{yield} from Python
+		\item look like regular, sequential function invocations
 	\end{itemize}
-	\item a very expressive tool for implementing asynchronous behavior
-	% make non-blocking asynchronous code as straightforward as plain synchronous code
+	\item very \textbf{lightweight} threads (like \href{https://en.wikipedia.org/wiki/Fiber_(computer_science)}{fibers}) % composable/delimited [stackless] ?ontinuations
+	\item still marked as \textbf{experimental}
+	\item very \textbf{low-level} designed so that frameworks can build upon it
 	\begin{itemize}
-		% not leading to "nested ladder pattern"
-		\item better syntax, look like regular function invocations
+		\item extensions for Android, JavaFX, Swing, \ldots
+		\item like \texttt{async/await} or \texttt{generators/yield}
+		\item Reference implementation: \texttt{kotlinx-coroutines-*}
+		% kotlinx-coroutines-core, kotlinx-coroutines-jdk8, kotlinx-coroutines-nio
+		% kotlinx-coroutines-reactive, kotlinx-coroutines-rx1, kotlinx-coroutines-rx2
+		% kotlinx-coroutines-android, kotlinx-coroutines-javafx, kotlinx-coroutines-swing
 	\end{itemize}
-	% necessary dependency? \texttt{kotlinx-coroutines-core}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile] \frametitle{Coroutines async load}
-Coroutines scale pretty good processing loads of async operations.
+\begin{frame}[fragile] \frametitle{Computation with lots of coroutines}
+Coroutines scale pretty good processing loads of async operations.\pause
 \begin{lstlisting}
-val jobs = List(100_000) {
-  async(CommonPool) {
+val jobs = List(100_000)|\pause| {
+  async(CommonPool)|\pause| {
     delay(1000L)
     1
   }
-}
+}|\pause|
 
-runBlocking { // bridge async world
+runBlocking { // bridge async world|\pause|
   println(jobs.sumBy {
     it.await()
   })
@@ -61,7 +60,7 @@ runBlocking { // bridge async world
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile] \frametitle{Threads instead}
+\begin{frame}[fragile] \frametitle{Computation with lots of threads}
 The same code with good old threads will \ldots
 \begin{lstlisting}
 for (i in 1..100_000) {
@@ -70,46 +69,91 @@ for (i in 1..100_000) {
   }
 }|\pause|
 \end{lstlisting}
-\textbf{OutOfMemoryError}: unable to create new native thread!
+\texttt{\textcolor{red}{OutOfMemoryError}}: unable to create new native thread!
 \end{frame}
 
-\fullimageCapt{coroutines_processing}{Suspendable computation explained}{10cm}
-
-
-\begin{frame}[fragile] \frametitle{Just some coroutine sample}
+\begin{frame}[fragile] \frametitle{Async processing without coroutines}
 \begin{lstlisting}
-suspend fun greet(name: String): String {
-  delay(randomTime)
-  return "Hello $name!"
+fun load(callback: (Int) -> Unit) {
+    sleep(1000L)
+    callback(21)
 }|\pause|
-
-runBlocking {
-  listOf("foobar", "World").map { name ->
-    async(CommonPool) {
-      greet(name)
+fun process(nr: Int, cb: (Int) -> Unit) {
+    sleep(1000L)
+    cb(nr * 2)
+}|\pause|
+fun main() {
+    load { loaded ->
+        process(loaded) { processed ->
+            // processed == 42
+        }
     }
-  }.map { it.await() }.joinToString()
 }
 \end{lstlisting}
 \end{frame}
+
+\fullimageCapt{callback_hell}{When the so-called ``callback hell'' strikes you hard}{10cm}
+% Source: \url{https://collinmakersquare.wordpress.com}
+
+\fullimageCapt{functions_inside}{}{9cm}
+
+\fullimageCapt{coroutines_processing}{Suspendable computation explained}{10cm}
+
+\begin{frame}[fragile] \frametitle{Async processing with coroutines}
+\begin{lstlisting}
+suspend fun load(): Int {
+    delay(1000L)
+    return 21
+}|\pause|
+suspend fun process(nr: Int): Int {
+    delay(1000L)
+    return nr * 2
+}|\pause|
+
+fun main() = runBlocking {
+    val nr = process(load())
+    // blocking or use async() and await()
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile] \frametitle{Async sequences}
+\begin{lstlisting}
+val nrs = buildSequence {
+  yieldAll(2.rangeTo(4))
+  sleep(1000L)
+  yield(42)
+}|\pause|
+nrs.forEach(::println)
+// 2, 3, 4, ... 42|\pause|
+
+// fun <T> buildIterator(
+//   action: suspend SequenceBuilder<T>.() 
+//     -> Unit): Iterator<T>
+\end{lstlisting}
+\end{frame}
+
+\fullimageCapt{two_programmers}{}{9cm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Type aliases}
-Add improved readability through custom naming.
+Add improved readability through custom naming.\pause
 \begin{lstlisting}
+fun request(expectedStatusCode: Int) {}|\pause|
 typealias StatusCode = Int|\pause|
 fun request(expected: StatusCode) {}
 request(200)|\pause|
 
-typealias Listener = (Event) -> Unit|\pause|
-fun subscribe(listener : Listener) {}
 fun subscribe(listener : (Event) -> Unit) {}|\pause|
+typealias Listener = (Event) -> Unit
+fun subscribe(listener : Listener) {}|\pause|
 
-class Outer {
+class MustBeTopLevel {
   typealias Nope = Double // compile error
 }
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/issues/4}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +178,7 @@ list.filter(numberRegex::matches)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Improved data and sealed classes}
-Subtypes outside of \texttt{sealed} class and \texttt{data} class inheritance added.
+Subtypes of a \texttt{sealed} class can now reside outside the class and \texttt{data} class can extend other classes.
 \begin{lstlisting}
 sealed class Expression|\pause|
 
@@ -144,6 +188,8 @@ object Operator : Expression()|\pause|
 // a data class can now extend another class
 data class Operand(val symbol: String)
   : Expression()
+  
+// use an Expression with a nice when()
 \end{lstlisting}
 \end{frame}
 
@@ -152,7 +198,7 @@ data class Operand(val symbol: String)
 \begin{frame}[fragile] \frametitle{Destructuring in lambdas}
 Destructuring now works in lambdas (and for data class).
 \begin{lstlisting}
-val map = mapOf(1 to "one")
+val map = mapOf(1 to "one")|\pause|
 
 // before kotlin11
 map.mapValues { entry ->
@@ -164,6 +210,7 @@ map.mapValues { entry ->
 map.mapValues { (key, value) -> 
   "$key = $value" }
 \end{lstlisting}
+\smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/destructuring-in-parameters.md}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,7 +219,7 @@ map.mapValues { (key, value) ->
 Not only for (class) properties, anymorebut also for local variables.
 \begin{lstlisting}
 fun exec(stringProvider: () -> String) {
-  val string by lazy(stringProvider)
+  val string by lazy(stringProvider)|\pause|
   
   // short circuit evaluation FTW
   if (condition() && string.isValid()) {
@@ -189,12 +236,15 @@ fun exec(stringProvider: () -> String) {
 \begin{frame}[fragile] \frametitle{Underscores}
 Underscore for numeral literals and unused parameters.  % (lambdas, destructuring declarations)
 \begin{lstlisting}
+// more readable numbers
 val creditCardNumber = 1234_5678_9012_3456L
 val hexBytes = 0xFF_EC_DE_5E
 val hexWords = 0xCAFE_BABE
 val maxval = 0x7fff_ffff_ffff_ffffL
 val bytes = 0b0110_1001;|\pause|
 
+// explicitly declare unused params
+// generating lots of warnings for old code
 mapOf(1 to "one").map { (k, _) -> k }
 \end{lstlisting}
 \smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/underscores-in-numeric-literals.md}}
@@ -205,9 +255,9 @@ mapOf(1 to "one").map { (k, _) -> k }
 \begin{frame}[fragile] \frametitle{Enhanced Properties}
 Type inference and inlining for \textbf{properties} % type inference for getter properties = shorter syntax :)
 \begin{lstlisting}
-data class Person(val age: Int) {
+data class Person(val age: Int) {|\pause|
   // before kotlin11
-  val isAdult get(): Boolean = age >= 18
+  val isAdult get(): Boolean = age >= 18|\pause|
 
   // with kotlin11
   val isAdult get() = age >= 18
@@ -222,9 +272,9 @@ val <T> List<T>.lastIndex: Int
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Generic enum value access}
-Supported via \texttt{enumValueOf()} and \texttt{enumValues()}.
+Access all/any enum and specify type via generics.
 \begin{lstlisting}
-enum class RGB { RED, GREEN, BLUE }
+enum class RGB { RED, GREEN, BLUE }|\pause|
 
 val red: RGB = enumValueOf("RED")|\pause|
 val rgbs: Array<RGB> = enumValues()|\pause|
@@ -239,7 +289,7 @@ println(enumValues<RGB>()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{DSLs -- The Problem}
-The inner scope always inherits the context of the outer scope:
+The inner scope always inherits the context of the outer scope.\pause
 \begin{lstlisting}
 html {
   head {
@@ -249,7 +299,7 @@ html {
     }
   }
 }
-\end{lstlisting}
+\end{lstlisting}\pause
 When within \texttt{head} let's remove the context of \texttt{html}!
 \end{frame}
 
@@ -258,12 +308,12 @@ When within \texttt{head} let's remove the context of \texttt{html}!
 \begin{lstlisting}
 fun html(code: HtmlContext.() -> Unit) {
   code(HtmlContext())
-}
+}|\pause|
 class HtmlContext {
   fun head(code: HeadContext.() -> Unit) {
     code(HeadContext())
   }
-}
+}|\pause|
 class HeadContext { }
 \end{lstlisting}
 \end{frame}
@@ -273,14 +323,14 @@ class HeadContext { }
 \begin{lstlisting}
 fun html(code: HtmlContext.() -> Unit) {
   code(HtmlContext())
-}
+}|\pause|
+@DslMarker annotation class MyDslMarker|\pause|
 @MyDslMarker class HtmlContext {
   fun head(code: HeadContext.() -> Unit) {
     code(HeadContext())
   }
-}
+}|\pause|
 @MyDslMarker class HeadContext { }
-@DslMarker annotation class MyDslMarker
 \end{lstlisting}
 \smallnote{\keep{https://github.com/Kotlin/KEEP/blob/master/proposals/scope-control-for-implicit-receivers.md}}
 \end{frame}

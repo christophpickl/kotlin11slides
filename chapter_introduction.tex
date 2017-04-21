@@ -7,19 +7,18 @@
 	
 \frame{\frametitle{Kotlin 1.1 is out} 
   \begin{itemize}[<+->]
-    \item Released on 1.3.2017 (about a year after 1.0)
-
-    \item Current 1.1.1 bugfix release two weeks later
-    \item Fully backwards compatible with 1.0    
+    \item Released on \textbf{1.3.2017} (about a year after \texttt{1.0})
+    \item Current Version is \texttt{1.1.1} (bugfix release two weeks later)
+    \item Fully backwards compatible with \texttt{1.0}
     % binary compatibility will always be given, but backwards compatibility? like in java for 20 years and carry on all the legacy stuff just to never break user code?
     \begin{itemize}
-    	\item Commitment to \textbf{binary compatibility}
-	\item Kotlin \texttt{2.0}? -- A possibility, not a plan % containing bigger/non-backwards-compatible language changes
+    	\item Full commitment to \textbf{binary compatibility}
+	\item Kotlin \texttt{2.0}? -- A possibility, not a plan! % containing bigger/non-backwards-compatible language changes
 	\item Migration tools will be provided % want to integrate a "migration tool", which gets rid of warnings when using old language constructs
     \end{itemize}
     \item Currently working on \href{https://blog.jetbrains.com/kotlin/2017/04/kotlinnative-tech-preview-kotlin-without-a-vm/}{kotlin-native}
 	    % (via LLVM) (seems kind like a problem to them to support JVM/JS/native, keep it to a minimum and add extensions)
-    \item Gradle and Spring are using Kotlin
+    \item Gradle and Spring are happily using Kotlin \texttt{:)}
     % 30 people working on kotlin at jetbreains
   \end{itemize}
 }
@@ -31,7 +30,7 @@
     \item \textbf{Java 8} bytecode via compiler option: \texttt{-jvm-target 1.8} % has no effect yet
     \item \textbf{JDK 8} classes via dependency: \texttt{kotlin-stdlib-jre8} % instead kotlin-stdlib
     \item Preserve \textbf{parameter names} via \texttt{-java-parameters}
-    \item \texttt{const val} are now being \textbf{inlined} by the compiler
+    \item \texttt{const val}s are now being \textbf{inlined} by the compiler
     \item Structural changes for \texttt{\textbf{kotlin-reflect.jar}} (Java 9)
     \begin{itemize}
 	\item \texttt{kotlin.reflect} renamed to \texttt{kotlin.reflect.full}
@@ -40,19 +39,21 @@
 	% core classes like KClass not affected, as part of std lib
 	% why => in order to prepare for java9, the jigsaw/modules feature; 
     \end{itemize}
+    \item Add \textbf{scripting} support for Kotlin script
   \end{itemize}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile] \frametitle{Scripting Engine}
-Requires some kts engine like: \texttt{kotlin-jsr223-local-example}
 \begin{lstlisting}
 val engine = ScriptEngineManager()
   .getEngineByExtension("kts") 
-  ?: throw Exception("kts not supported!")
+  ?: throw Exception("kts not supported!")|\pause|
 
+// do some ev[ai]l magic
 engine.eval("val x = 3")
 println(engine.eval("x + 2"))  // 5
-\end{lstlisting}
+\end{lstlisting}\pause
+Requires a kts engine like: \texttt{kotlin-jsr223-local-example}
 \end{frame}

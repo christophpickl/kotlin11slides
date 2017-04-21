@@ -1,29 +1,17 @@
 
 TODO
 ========================================================================
-!!! show how to upgrade (gradle/maven, intellij, CLI)
-!! upload to slideshare (also old stuff)
+! show how to upgrade (gradle/maven, intellij, CLI)
+
 ! IDEA: first show slide with problem/old solution, and then with new approach
 ! add slide: KEEP; Kotlin Evolution and Enhancement Process
 	* https://github.com/Kotlin/KEEP
 	* SEE list of issues for kotlin 1.1: https://github.com/Kotlin/KEEP/milestone/1
 	* view future features (discussions, proposals, etc.)
 	* add keep link to every slide (if available)
-! ad links:
-	* KUG@meetup
+
+! upload to slideshare
 
 - READ https://blog.jetbrains.com/kotlin/2017/03/kotlin-1-1/
 - READ https://blog.jetbrains.com/kotlin/2017/01/kotlin-1-1-whats-coming-in-the-standard-library/
 - READ https://blog.jetbrains.com/kotlin/2017/04/kotlin-1-1-is-also-for-android-developers/
-
-
-LINKS
-========================================================================
-* "What's New in Kotlin 1.1"
-	http://kotlinlang.org/docs/reference/whatsnew11.html
-
-
-
-COROUTINES
-========================================================================
-* also named: async/await/yield, fibers, [stackless] continuation
